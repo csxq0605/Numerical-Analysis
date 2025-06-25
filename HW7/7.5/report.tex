@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{ctex}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{HW7 报告}
+\author{苏王捷 2300011075}
+
+\begin{document}
+\maketitle
+
+\section{报告要求}
+
+我选择了自适应Simpson积分法来计算$\pi_p$值。
+
+Simpson积分公式使用二次多项式近似被积函数，对于区间$[a,b]$上的函数$f(x)$:
+
+$$\int_a^b f(x) dx \approx \frac{b-a}{6}\left[f(a) + 4f\left(\frac{a+b}{2}\right) + f(b)\right]$$
+
+这种方法对于平滑函数通常有较好的精度，但对于像题目中$[u^{1-p}+(1-u)^{1-p}]^{1/p}$这样在端点处可能趋于无穷的函数，需要更精细的处理。
+
+因而，我们需要使用自适应Simpson积分法，使用递归方式将区间不断细分，直到满足给定的误差容限。具体实现中，我设置了一个小的正数$\delta$来避免在奇异点处计算，从而提高了数值稳定性；同时设置了一个maxDepth作为递归上限防止无限递归并保证能得到返回的数值结果。
+
+\begin{enumerate}
+\item 将积分区间$[a,b]$分为两个子区间$[a,c]$和$[c,b]$，其中$c=(a+b)/2$；
+\item 分别计算这两个子区间的Simpson积分值$S_L$和$S_R$；
+\item 比较$S_L + S_R$与整个区间$[a,b]$的Simpson积分值$S$的差异；
+\item 如果差异小于给定的误差容限，则使用$S_L + S_R$作为结果；
+\item 否则，递归地对子区间应用相同的过程，直到满足给定的误差容限或达到给定的递归上限。
+\item 公式中的系数15来自于Simpson公式的误差分析。当区间减半时，Simpson公式的误差理论上会减少约16倍，所以我们使用15作为一个保守的估计。表达式$(total - whole) / 15$是一个误差校正项，可以提高积分结果的精度。
+\end{enumerate}
+
+此外，我利用了题目提示的对偶性质：当1/p + 1/q = 1时，$\pi_p$=$\pi_q$，将大于2的p值转换为较小的q值进行计算，提高了计算大p值时的稳定性和效率。
+
+该实现将积分误差控制在非常小的范围内，保证了计算结果的准确性，满足误差小于5\%的要求。
+
+\end{document}

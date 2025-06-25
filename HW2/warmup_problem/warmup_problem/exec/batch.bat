@@ -1,0 +1,1 @@
+HW1_LU_dcmp.exe ..\test\input01.txt >>output01.txt
